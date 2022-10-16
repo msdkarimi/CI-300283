@@ -25,7 +25,7 @@ class State:
     def contain(self):
         return self._data
 
-    def copy_data(self):
+    def copyData(self):
         return self._data.copy()
 
     def createSet (self, x, y):

@@ -5,20 +5,20 @@ import problem as PROB
 import numpy
 
 def goalStateCheck(stateToBeChecked : state, goal : state):
-
     return set(stateToBeChecked.contain()) == set(goal.contain())
 
-    # if len(stateToBeChecked.contain()) > 0:
-    #     result = set (numpy.hstack(numpy.array(list(stateToBeChecked.contain()))))
-    #     sortedStateToBeChecked = sorted(result)
-    #     return sortedStateToBeChecked == goal.contain()
-    # else:
-    #     return False
 
 def resultOfAction(currentState : state, action: numpy.ndarray):
-    cS = set(currentState.contain())
+    # temp = currentState.contain()
+    # temp.append(action)
+    # temp = tuple(temp)
+    # return temp
+
+    #
+    cS = set(currentState.copyData())
     cS |= set(action)
-    return  state.State(cS)
+    return state.State(cS)
+
 
 
 def doesSearch ( initialStat: state,
@@ -30,7 +30,7 @@ def doesSearch ( initialStat: state,
                 priorityFunction : callable
                  ):
     # print(len(problem))
-    # print(problem)
+    print(problem)
     frontier = PQ.PriorityQueue()
     parentState.clear()
     stateCost.clear()
@@ -42,16 +42,22 @@ def doesSearch ( initialStat: state,
     print("spanning tree")
     while currentState is not None and not goalStateCheck(currentState, goal):
        for p in problem:
-           newState = resultOfAction(currentState, p)
-           # newState = state.State(p)
-           cost = unitCost(p)
+          newState = resultOfAction(currentState, p)
+          cost = unitCost(p)
 
-           if newState not in stateCost and newState not in frontier:
+          # if type(res) != int:
+          #     newState = res
+          #     cost = unitCost(p)
+          # else:
+          #     continue
+          # newState = resultOfAction(currentState, p)
+          # cost = unitCost(p)
+          if newState not in stateCost and newState not in frontier:
                parentState[newState] = currentState
                stateCost[newState] = stateCost[currentState] + cost
-               frontier.push(newState, p = priorityFunction(newState))
+               frontier.push(newState, p = priorityFunction(newState, currentState))
                # logging.warning(f"Added new node to frontier (cost={ stateCost[newState]})")
-           elif newState in frontier and stateCost[newState] > stateCost[currentState] + cost:
+          elif newState in frontier and stateCost[newState] > stateCost[currentState] + cost:
                old_cost = stateCost[currentState]
                parentState[newState] = currentState
                stateCost[newState] = stateCost[currentState] + cost
@@ -59,10 +65,6 @@ def doesSearch ( initialStat: state,
 
        if frontier:
            currentState = frontier.pop()
-           # listOfPriorities.append(currentState)
-
-           # currentState = state.State(listOfPriorities.append(popped))
-           # currentState = state.State(listOfPriorities.append([99]))
 
        else:
            currentState = None
@@ -71,8 +73,9 @@ def doesSearch ( initialStat: state,
     s = currentState
 
     while s:
-        path.append(s.copy_data())
+        path.append(s.copyData())
         s = parentState[s]
+        # path.append(s.copyData())
 
     logging.warning(f"Found a solution in {len(path):,} steps; visited {len(stateCost):,} states")
     return list(reversed(path))
