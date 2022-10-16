@@ -1,4 +1,4 @@
-This project implemented by Masoud Karimi and Milad Zakhireh
+This project implemented by Masoud Karimi and Milad Zakhireh  
 N = 5 
 WARNING:root:Found a solution in 3 steps; visited 32 states
 path = [{0}, {0, 1, 3}, {0, 1, 2, 3, 4}]
