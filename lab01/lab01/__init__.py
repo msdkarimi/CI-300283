@@ -1,10 +1,8 @@
-import numpy
+
 import problem
 import state as S
 import property as P
 import search as SRCH
-
-
 
 N = 5
 seed = 42
