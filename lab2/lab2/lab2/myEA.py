@@ -13,7 +13,8 @@ class EA:
        self.listOfIndevidualsAndTheirFitness = list()
        self.rankedListOfIndevidualsAndTheirFitness = list()
        self.roulletWheelOfIndevidualsAndTheirFitness = list()
-       self.creatingPopulation(setOfProblem)
+       self.setOfProblem = setOfProblem
+       self.creatingPopulation(self.setOfProblem)
        # self.breeding()
 
 
@@ -58,9 +59,12 @@ class EA:
             for index in genome:
                 localList.append(setOfProblem[index])
         else:
-            localList.append(genome)
+            for index in genome:
+                localList.append(setOfProblem[index])
         cnt = Counter()
         cnt.update(sum((e for e in localList), start=()))
+        if setOfProblem is None:
+            print(len(cnt), -cnt.total())
         return len(cnt), -cnt.total()
 
     def breeding(self):
@@ -71,10 +75,12 @@ class EA:
                     # self.roulletWheelOfIndevidualsAndTheirFitness
                     p = self.tournament()
                     o = self.mutation(p.genome)
+                    print(o)
                 else:
                     p1 = self.tournament()
                     p2 = self.tournament()
                     o = self.cross_over(p1.genome, p2.genome)
+                    print(o)
                 f = self.forEvaluation(o)
                 offspring.append(Individual(o, f))
             self.listOfIndevidualsAndTheirFitness += offspring
@@ -96,5 +102,7 @@ class EA:
         return g1[:cut] + g2[cut:]
 
     def mutation(self, g):
+        g= list(g)
         point = random.randint(0, self.problemsize - 1)
-        return g[:point] + (1 - g[point],) + g[point + 1:]
+        indexForMutation = random.randint(0,len(self.setOfProblem))
+        return tuple(g[:point] + [indexForMutation] + g[point + 1:])
