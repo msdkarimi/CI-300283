@@ -23,6 +23,3 @@ class Problem:
             sortedelement  = sorted(_)
             sortedList.add(tuple(sortedelement))
         return sorted(sortedList)
-
-    def myGoal(self):
-        return set(range(self.prombelSize))
