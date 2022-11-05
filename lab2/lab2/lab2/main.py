@@ -1,11 +1,11 @@
 import problem
 import myEA
 import numpy
-N = 200
+N = 1000
 seed = 42
-populationSize = 15
-problemSize = 10
-offspringSize = 6
+populationSize = 200
+problemSize = 13
+offspringSize =100
 generatorsSize = 500
 myProblem = problem.Problem(N, seed)
 ea = myEA.EA(problemSize, populationSize, offspringSize, generatorsSize, myProblem.setOfProblem)
