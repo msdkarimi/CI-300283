@@ -14,6 +14,7 @@ class EA:
        self.rankedListOfIndevidualsAndTheirFitness = list()
        self.roulletWheelOfIndevidualsAndTheirFitness = list()
        self.creatingPopulation(setOfProblem)
+       self.breeding()
 
 
     def creatingPopulation(self, setOfProblem ):
@@ -64,19 +65,27 @@ class EA:
             offspring = list()
             for i in range(self.offspringSize):
                 if random.random() < 0.3:
-                    p = self.tournament(self.listOfIndevidualsAndTheirFitness)
+                    p = self.tournament(self.roulletWheelOfIndevidualsAndTheirFitness)
                     o = self.mutation(p.genome)
                 else:
-                    p1 = self.tournament(self.listOfIndevidualsAndTheirFitness)
-                    p2 = self.tournament(self.listOfIndevidualsAndTheirFitness)
+                    p1 = self.tournament(self.roulletWheelOfIndevidualsAndTheirFitness)
+                    p2 = self.tournament(self.roulletWheelOfIndevidualsAndTheirFitness)
                     o = self.cross_over(p1.genome, p2.genome)
                 f = self.forEvaluation(o)
                 offspring.append(Individual(o, f))
             self.listOfIndevidualsAndTheirFitness += offspring
-            self.listOfIndevidualsAndTheirFitness = sorted(self.listOfIndevidualsAndTheirFitness, key=lambda i: i.fitness, reverse=True)[:self.populationSize]
+            self.rankOfEachIndevidualByMeansOfRouletteWheelApproach()
+            self.rankedAsRoulletWheel()
+
+            self.rankedListOfIndevidualsAndTheirFitness = self.rankedListOfIndevidualsAndTheirFitness[:self.populationSize]
+            self.roulletWheelOfIndevidualsAndTheirFitness = self.roulletWheelOfIndevidualsAndTheirFitness[:self.populationSize]
+
+
+
+            # self.listOfIndevidualsAndTheirFitness = sorted(self.listOfIndevidualsAndTheirFitness, key=lambda i: i.fitness, reverse=True)[:self.populationSize]
 
     def tournament(self, tournament_size=2):
-        return max(random.choices(self.listOfIndevidualsAndTheirFitness, k=tournament_size), key=lambda i: i.fitness)
+        return max(random.choices(self.roulletWheelOfIndevidualsAndTheirFitness, k=tournament_size), key=lambda i: i.fitness)
 
     def cross_over(self, g1, g2):
         cut = random.randint(0, self.problemsize)
