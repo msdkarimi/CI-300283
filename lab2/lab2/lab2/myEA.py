@@ -15,7 +15,7 @@ class EA:
        self.roulletWheelOfIndevidualsAndTheirFitness = list()
        self.setOfProblem = setOfProblem
        self.creatingPopulation(self.setOfProblem)
-       # self.breeding()
+       self.breeding()
 
 
     def creatingPopulation(self, setOfProblem ):
@@ -53,18 +53,19 @@ class EA:
 
 
 
-    def forEvaluation(state, genome, setOfProblem=None):
+    def forEvaluation(self, genome, setOfProblem=None):
         localList = list()
         if setOfProblem is not None:
             for index in genome:
                 localList.append(setOfProblem[index])
         else:
             for index in genome:
-                localList.append(setOfProblem[index])
+                # print(f"index={index}")
+                localList.append(self.setOfProblem[index])
         cnt = Counter()
         cnt.update(sum((e for e in localList), start=()))
-        if setOfProblem is None:
-            print(len(cnt), -cnt.total())
+        # if setOfProblem is None:
+            # print(len(cnt), -cnt.total())
         return len(cnt), -cnt.total()
 
     def breeding(self):
@@ -75,12 +76,12 @@ class EA:
                     # self.roulletWheelOfIndevidualsAndTheirFitness
                     p = self.tournament()
                     o = self.mutation(p.genome)
-                    print(o)
+                    # print(o)
                 else:
                     p1 = self.tournament()
                     p2 = self.tournament()
                     o = self.cross_over(p1.genome, p2.genome)
-                    print(o)
+                    # print(o)
                 f = self.forEvaluation(o)
                 offspring.append(Individual(o, f))
             self.listOfIndevidualsAndTheirFitness += offspring
@@ -104,5 +105,5 @@ class EA:
     def mutation(self, g):
         g= list(g)
         point = random.randint(0, self.problemsize - 1)
-        indexForMutation = random.randint(0,len(self.setOfProblem))
+        indexForMutation = random.randint(0,len(self.setOfProblem)-1)
         return tuple(g[:point] + [indexForMutation] + g[point + 1:])

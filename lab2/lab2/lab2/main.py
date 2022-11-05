@@ -1,23 +1,21 @@
 import problem
 import myEA
 import numpy
-N = 10
+N = 200
 seed = 42
-populationSize = 6
-offspringSize = 2
-generatorsSize = 1000
+populationSize = 15
+problemSize = 10
+offspringSize = 6
+generatorsSize = 500
 myProblem = problem.Problem(N, seed)
-print(myProblem.setOfProblem)
-ea = myEA.EA(N, populationSize, offspringSize, generatorsSize, myProblem.setOfProblem)
-print(ea.listOfIndevidualsAndTheirFitness)
-print(ea.rankedListOfIndevidualsAndTheirFitness)
+ea = myEA.EA(problemSize, populationSize, offspringSize, generatorsSize, myProblem.setOfProblem)
 print(ea.roulletWheelOfIndevidualsAndTheirFitness)
-ea.breeding()
 print(ea.rankedListOfIndevidualsAndTheirFitness)
 result = ea.rankedListOfIndevidualsAndTheirFitness
-indexOfsolution = list(result[1].genome)
+indexOfsolution = list(result[0].genome)
 NParrayOfSet = numpy.array(myProblem.setOfProblem, dtype=set)
-print(NParrayOfSet[indexOfsolution])
+solution = NParrayOfSet[indexOfsolution]
+print(solution)
 
 
 
