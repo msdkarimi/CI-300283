@@ -1,5 +1,15 @@
 # lab#2
 ## Set Covering by means of EA
 This laboratory in implemented by Masoud Karimi(300283) and Milad Zakhireh(300708)
+### Results
+| Syntax | Description | nodes |
+|--------|-------------|-------|
+| 5      | 5           |[(3,) (1,) (4,) (0, 2)]|
+| 10     | 10          |[(2, 5) (1, 7) (0, 4) (3, 6, 8, 9)]|
+| 20     | 29          |[(2, 6, 8, 10, 12, 15, 18) (0, 1, 3, 7, 9, 10, 11, 15)
+ (1, 3, 8, 11, 14, 19) (4, 5, 8, 13, 15, 16, 17, 19)]|
+| 100    | ?           ||
+| 500    | ?           ||
+| 1000   | ?           ||
 
 

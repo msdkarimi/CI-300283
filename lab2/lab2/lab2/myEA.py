@@ -2,6 +2,7 @@ import copy
 from collections import namedtuple, Counter
 import random
 from functools import cmp_to_key
+import numpy
 
 Individual = namedtuple("Individual", ["genome", "fitness"])
 class EA:
@@ -16,6 +17,12 @@ class EA:
        self.setOfProblem = setOfProblem
        self.creatingPopulation(self.setOfProblem)
        self.breeding()
+       self.resultIndex = self.rankedListOfIndevidualsAndTheirFitness[0].genome
+       self.resultFitness = self.rankedListOfIndevidualsAndTheirFitness[0].fitness
+       self.coveredLists = numpy.array(self.setOfProblem, dtype=set)[list(self.resultIndex)]
+
+
+
 
 
     def creatingPopulation(self, setOfProblem ):
@@ -60,12 +67,9 @@ class EA:
                 localList.append(setOfProblem[index])
         else:
             for index in genome:
-                # print(f"index={index}")
                 localList.append(self.setOfProblem[index])
         cnt = Counter()
         cnt.update(sum((e for e in localList), start=()))
-        # if setOfProblem is None:
-            # print(len(cnt), -cnt.total())
         return len(cnt), -cnt.total()
 
     def breeding(self):
@@ -73,7 +77,6 @@ class EA:
             offspring = list()
             for i in range(self.offspringSize):
                 if random.random() < 0.3:
-                    # self.roulletWheelOfIndevidualsAndTheirFitness
                     p = self.tournament()
                     o = self.mutation(p.genome)
                     # print(o)
@@ -90,10 +93,6 @@ class EA:
 
             self.rankedListOfIndevidualsAndTheirFitness = self.rankedListOfIndevidualsAndTheirFitness[:self.populationSize]
             self.roulletWheelOfIndevidualsAndTheirFitness = self.roulletWheelOfIndevidualsAndTheirFitness[:self.populationSize]
-
-
-
-            # self.listOfIndevidualsAndTheirFitness = sorted(self.listOfIndevidualsAndTheirFitness, key=lambda i: i.fitness, reverse=True)[:self.populationSize]
 
     def tournament(self, tournament_size=2):
         return max(random.choices(self.roulletWheelOfIndevidualsAndTheirFitness, k=tournament_size), key=lambda i: i.fitness)
