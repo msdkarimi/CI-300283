@@ -1,23 +1,17 @@
 import problem
 import myEA
-import numpy
-N = 20
 seed = 42
-populationSize = 10
-problemSize = 4
-offspringSize =5
+Ns = [5, 10, 20, 100, 500, 1000]
+populationSizes = [10, 10, 10, 20, 30, 200]
+problemSizes = [4, 4, 4, 7, 10, 13]
+offspringSizes = [5, 5, 5, 10, 15, 50]
 generatorsSize = 500
-myProblem = problem.Problem(N, seed)
-ea = myEA.EA(problemSize, populationSize, offspringSize, generatorsSize, myProblem.setOfProblem)
-print(ea.resultFitness)
-print(ea.coveredLists)
-# print(ea.roulletWheelOfIndevidualsAndTheirFitness)
-# print(ea.rankedListOfIndevidualsAndTheirFitness)
-# result = ea.rankedListOfIndevidualsAndTheirFitness
-# indexOfsolution = list(result[0].genome)
-# NParrayOfSet = numpy.array(myProblem.setOfProblem, dtype=set)
-# solution = NParrayOfSet[indexOfsolution]
-# print(solution)
+for index in range(len(Ns)):
+    myProblem = problem.Problem(Ns[index], seed)
+    ea = myEA.EA(problemSizes[index], populationSizes[index], offspringSizes[index], generatorsSize, myProblem.setOfProblem)
+    print(ea.resultFitness)
+    print(ea.coveredLists)
+
 
 
 
