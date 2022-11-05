@@ -6,7 +6,6 @@ class Problem:
         self.prombelSize = n
         self.listOfProblem = self.myProblem(n, seed)
         self.setOfProblem = self.creatSetFromListOfProblem()
-        self.goal = self.myGoal()
 
     def myProblem(self, N, seed=None):
         """Creates an instance of the problem"""
