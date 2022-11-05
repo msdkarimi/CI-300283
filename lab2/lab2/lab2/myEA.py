@@ -14,7 +14,7 @@ class EA:
        self.rankedListOfIndevidualsAndTheirFitness = list()
        self.roulletWheelOfIndevidualsAndTheirFitness = list()
        self.creatingPopulation(setOfProblem)
-       self.breeding()
+       # self.breeding()
 
 
     def creatingPopulation(self, setOfProblem ):
@@ -52,10 +52,13 @@ class EA:
 
 
 
-    def forEvaluation(state, genome, setOfProblem):
+    def forEvaluation(state, genome, setOfProblem=None):
         localSet = set()
-        for index in genome:
-            localSet.add(setOfProblem[index])
+        if setOfProblem is not None:
+            for index in genome:
+                localSet.add(setOfProblem[index])
+        else:
+            localSet.add(genome)
         cnt = Counter()
         cnt.update(sum((e for e in localSet), start=()))
         return len(cnt), -cnt.total()
@@ -65,11 +68,12 @@ class EA:
             offspring = list()
             for i in range(self.offspringSize):
                 if random.random() < 0.3:
-                    p = self.tournament(self.roulletWheelOfIndevidualsAndTheirFitness)
+                    # self.roulletWheelOfIndevidualsAndTheirFitness
+                    p = self.tournament()
                     o = self.mutation(p.genome)
                 else:
-                    p1 = self.tournament(self.roulletWheelOfIndevidualsAndTheirFitness)
-                    p2 = self.tournament(self.roulletWheelOfIndevidualsAndTheirFitness)
+                    p1 = self.tournament()
+                    p2 = self.tournament()
                     o = self.cross_over(p1.genome, p2.genome)
                 f = self.forEvaluation(o)
                 offspring.append(Individual(o, f))
