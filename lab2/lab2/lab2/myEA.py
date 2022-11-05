@@ -53,14 +53,14 @@ class EA:
 
 
     def forEvaluation(state, genome, setOfProblem=None):
-        localSet = set()
+        localList = list()
         if setOfProblem is not None:
             for index in genome:
-                localSet.add(setOfProblem[index])
+                localList.append(setOfProblem[index])
         else:
-            localSet.add(genome)
+            localList.append(genome)
         cnt = Counter()
-        cnt.update(sum((e for e in localSet), start=()))
+        cnt.update(sum((e for e in localList), start=()))
         return len(cnt), -cnt.total()
 
     def breeding(self):
