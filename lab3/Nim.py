@@ -10,6 +10,7 @@ class MyNim:
         self._rows = [(i*2)+1 for i in range(numRows)]
         self._k = k
         self.inferedStatus = dict()
+        self.inferableInformation()
 
     def __bool__(self):
         return sum(self._rows) > 0
@@ -47,12 +48,13 @@ class MyNim:
 
 
     def inferableInformation(self) -> None:
-        self.inferedStatus["evenRows"] = [count  for count,rowValue in enumerate(self._rows) if rowValue%2]
-        self.inferedStatus["oddRows"] = [count for count, rowValue in enumerate(self._rows) if not rowValue % 2]
-        self.inferedStatus["nimSim"] = self.nimSum()
+        self.inferedStatus["oddRows"] = [count  for count,rowValue in enumerate(self._rows) if rowValue%2]
+        self.inferedStatus["evenRows"] = [count for count, rowValue in enumerate(self._rows) if not rowValue % 2]
+        self.inferedStatus["nimSum"] = self.nimSum()
         self.inferedStatus["longets"] = self._rows.index(max(self._rows, key= lambda i:i))
         self.inferedStatus["shortest"] = self._rows.index(min(self._rows, key=lambda i: i))
         self.inferedStatus["ifRowsAreEven"] = len([count  for count,rowValue in enumerate(self._rows) if rowValue%2])%2 == 0
+        self.inferedStatus["possible_moves"] = [ (r, o) for r, c in enumerate(self.rows) for o in range(1, c + 1) if self.k is None or o <= self.k ]
 
 
 
@@ -71,3 +73,17 @@ class MyNim:
     def nimSum(self) -> list:
         *_, result = itertools.accumulate(self._rows, xor)
         return result
+
+    def properActionToPerformNimSum(self) -> RowObjectsPair:
+        x = self.inferedStatus["nimSum"]
+        possibleObjects = [ x  for rowValue in self._rows if rowValue >= x  ]
+        indexOfPossibleObjects = self._rows.index(possibleObjects[0])
+        return RowObjectsPair(indexOfPossibleObjects, possibleObjects)
+
+    # def findPossibleNimSumStrategy(self) -> dict:
+    #     if not self.inferedStatus["nimSum"]:
+    #         return dict({"possible": False
+    #                      ,"strategy": None})
+    #     else:
+    #         for i in
+    #
