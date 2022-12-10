@@ -48,8 +48,8 @@ class MyNim:
 
 
 
-    def doNimming(self):
-        strategies = [self.properActionToPerformNimSum, self.evaluate({"p":random.random()})]
+    def doNimming(self, gemone:dict):
+        strategies = [self.properActionToPerformNimSum, self.evaluate(gemone)]
         print(f"initial board : {self._rows}")
         player = 0
         while self:
