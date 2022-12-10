@@ -2,12 +2,15 @@ import itertools
 from operator import xor
 import random
 from RowObjectsPair import RowObjectsPair
+from copy import deepcopy
+from typing import Callable
 
 
 class MyNim:
 
     def __init__(self, numRows : int, k : int = None )-> None:
         self._rows = [(i*2)+1 for i in range(numRows)]
+        self.copyOfRows = list()
         self._k = k
         self.inferedStatus = dict()
         self.inferableInformation()
@@ -26,25 +29,38 @@ class MyNim:
     def k(self) -> int:
         return self._k
 
+    def deepCopyOf_rows(self):
+        self.copyOfRows = deepcopy(self._rows)
+        return self.copyOfRows
 
-    def nimming(self, strategy :RowObjectsPair) -> None:
-        row =  strategy.row
-        numObjects = strategy.numberOfObject
-        # assert self._rows[row] >= numObjects
-        # assert self._k is None or numObjects <= self._k
-        self._rows[row] -= numObjects
+
+    def nimming(self, strategy :RowObjectsPair, ifFindingNimSum = None) -> None:
+        if not ifFindingNimSum:
+            row =  strategy.row
+            numObjects = strategy.numberOfObject
+            # assert self._rows[row] >= numObjects
+            # assert self._k is None or numObjects <= self._k
+            self._rows[row] -= numObjects
+        else:
+            row = strategy.row
+            numObjects = strategy.numberOfObject
+            self.copyOfRows[row] -= numObjects
+
+
 
     def doNimming(self):
-        strategies = [self.pureRandomStrategy, self.pureRandomStrategyPluseWhole]
+        strategies = [self.properActionToPerformNimSum, self.evaluate({"p":random.random()})]
         print(f"initial board : {self._rows}")
         player = 0
         while self:
-            strategy = strategies[player]()
+            if not player:
+                strategy = strategies[player]()
+            else:
+                strategy = strategies[player]()
             self.nimming(strategy)
             print(f" PLayer: {player}, Board: {self._rows}")
             player = 1 - player
         print(f"winner is player {player}")
-
 
 
     def inferableInformation(self) -> None:
@@ -52,9 +68,9 @@ class MyNim:
         self.inferedStatus["evenRows"] = [count for count, rowValue in enumerate(self._rows) if not rowValue % 2]
         self.inferedStatus["nimSum"] = self.nimSum()
         self.inferedStatus["longets"] = self._rows.index(max(self._rows, key= lambda i:i))
-        self.inferedStatus["shortest"] = self._rows.index(min(self._rows, key=lambda i: i))
+        self.inferedStatus["shortest"] = self._rows.index(min(i for i in self._rows if i > 0))
         self.inferedStatus["ifRowsAreEven"] = len([count  for count,rowValue in enumerate(self._rows) if rowValue%2])%2 == 0
-        self.inferedStatus["possible_moves"] = [ (r, o) for r, c in enumerate(self.rows) for o in range(1, c + 1) if self.k is None or o <= self.k ]
+        self.inferedStatus["possible_moves"] = [(r, a1) for r,i in enumerate(self._rows) for a1 in range(i + 1) if a1 >= self.k and a1 <= a1 + 1]
 
 
 
@@ -70,20 +86,40 @@ class MyNim:
         return RowObjectsPair(selectedRow, numberOfObjects)
 
 
-    def nimSum(self) -> list:
-        *_, result = itertools.accumulate(self._rows, xor)
-        return result
+    def nimSum(self, ifFindingNimSum = None) -> list:
+        if not ifFindingNimSum:
+            *_, result = itertools.accumulate(self._rows, xor)
+            return result
+        else:
+            *_, result = itertools.accumulate(self.copyOfRows, xor)
+            return result
+
 
     def properActionToPerformNimSum(self) -> RowObjectsPair:
-        x = self.inferedStatus["nimSum"]
-        possibleObjects = [ x  for rowValue in self._rows if rowValue >= x  ]
-        indexOfPossibleObjects = self._rows.index(possibleObjects[0])
-        return RowObjectsPair(indexOfPossibleObjects, possibleObjects)
+       self.inferableInformation()
+       x = self.inferedStatus["nimSum"]
+       if x:
+            possibleMoves = self.inferedStatus["possible_moves"]
 
-    # def findPossibleNimSumStrategy(self) -> dict:
-    #     if not self.inferedStatus["nimSum"]:
-    #         return dict({"possible": False
-    #                      ,"strategy": None})
-    #     else:
-    #         for i in
-    #
+            for rowActionPair in possibleMoves:
+                _ = self.deepCopyOf_rows()
+                indexOfPossibleObjects, possibleObjects = rowActionPair
+                self.nimming(RowObjectsPair(indexOfPossibleObjects, possibleObjects), self.copyOfRows)
+                if  not self.nimSum(self.copyOfRows):
+                    self.copyOfRows = list()
+                    return RowObjectsPair(indexOfPossibleObjects, possibleObjects)
+
+            self.copyOfRows = list()
+            return self.pureRandomStrategy()
+       self.copyOfRows = list()
+       return self.pureRandomStrategy()
+
+    def evaluate(self, selectionThreshold: dict) -> Callable:
+        def evolvable() -> RowObjectsPair:
+            self.inferableInformation()
+            if random.random() < selectionThreshold["p"]:
+                ply = RowObjectsPair(self.inferedStatus["shortest"], random.randint(1, self._rows[self.inferedStatus["shortest"]]))
+            else:
+                ply = RowObjectsPair(self.inferedStatus["longets"], random.randint(1, self._rows[self.inferedStatus["longets"]]))
+            return ply
+        return evolvable
